@@ -1,0 +1,209 @@
+Cody Hubbard - 004843389
+
+My simple program (simple.c):
+
+		#include <math.h>
+		#include <stdio.h>
+
+		int main()
+		{
+
+		  float temp = cos(sqrt(3.0));
+
+
+		  printf("%.2f", temp);
+
+		  return 0;
+
+		}
+		
+gcc -o simple  simple.c
+-complie my simple program
+
+ldd simple
+-view the dynamic libraries linked to my simple program
+-OUTPUT:
+        linux-vdso.so.1 =>  (0x00007ffd695da000)
+        libc.so.6 => /lib64/libc.so.6 (0x00000033a7200000)
+        /lib64/ld-linux-x86-64.so.2 (0x00000033a6e00000)
+
+strace ./simple
+-view the system calls my program is making
+OUTPUT RELATED TO LINKING:
+	open("/lib64/libc.so.6", O_RDONLY)      = 3
+	read(3, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0000\356!\2473\0\0\0"..., 832) = 832
+	fstat(3, {st_mode=S_IFREG|0755, st_size=1930416, ...}) = 0
+	mmap(0x33a7200000, 3750184, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x33a7200000
+	mprotect(0x33a738a000, 2097152, PROT_NONE) = 0
+	mmap(0x33a758a000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x18a000) = 0x33a758a000
+	mmap(0x33a7590000, 14632, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x33a7590000
+	close(3)  
+-these are the system calls associated to opening and reading from the "libc.so.6" library:
+	-open: opens the library, 
+	-read: reads data from the library
+	-fstat: get information about the library's file, checking filetype, access permissions, size, etc...
+	-mmap: copies the library into memory for use
+	
+ls /usr/bin | awk 'NR%101==004843389%101'
+-get the commands associated(?) to the string of numbers that is my user id
+-OUTPUT:
+	atktopbm
+	cdda2ogg
+	croco-0.6-config
+	dehtmldiff
+	espdiff
+	fmt
+	gjar
+	gpgconf
+	gunzip
+	htsearch
+	javadoc
+	kibitz
+	kwrapper4
+	lprm.cups
+	mft
+	mysql_setpermission
+	openjade
+	pamtosvg
+	pdfcsplain
+	pilot-install-todo
+	pnmtopclxl
+	preparetips
+	rarian-sk-get-scripts
+	rpmdev-diff
+	sessreg
+	spam
+	tchtest
+	unix-lpr.sh
+	x11perfcomp
+	xsubpp
+
+cd /usr/bin
+ldd ____
+-ran ldd on all of the above files and saved the output to a file
+-reviewing the output I found that the following files gave errors, followed by their error, and the reason
+
+ldd cdda2ogg
+        not a dynamic executable - it is a script
+	
+ldd croco-0.6-config
+        not a dynamic executable 
+		- helper script for building with libcroco
+
+ldd dehtmldiff
+        not a dynamic executable 
+		- its a command used to get usable diff from an HTML page
+		
+ldd espdiff
+        not a dynamic executable
+		- command for applying transformations to patches (?)
+		
+ldd gunzip
+        not a dynamic executable
+		-file compression command
+		
+ldd kibitz
+        not a dynamic executable
+		-command for multi-user use of a single shell
+		
+ldd mysql_setpermission
+        not a dynamic executable
+		-command for changing MySQL permissions
+		
+ldd preparetips
+        not a dynamic executable
+		-command for extracting text from tips files
+		
+ldd rarian-sk-get-scripts
+        not a dynamic executable
+		-some sort of command for use with the rarian package 
+		
+ldd rpmdev-diff
+        not a dynamic executable
+		-command for finding differences between two archives
+		
+ldd unix-lpr.sh
+        not a dynamic executable
+		-a flexible, multi-option print filter
+		
+ldd x11perfcomp
+        not a dynamic executable
+		-a program to compare X11 server preformance
+		
+ldd xsubpp
+        not a dynamic executable
+		-a compiler to convert Perl XS code into C code
+		
+-Overall I got each of there errors becasue the files ldd was ran on were not in ELF format.
+	They were not executables with dynamically linked libraries. Some were shell scripts, others were text files.
+	
+cat ldd_output.txt | sed '/not a dynamic executable/d' | grep \.so | sed 's/(.*)$//g' > filt_ldd_o.txt
+-ldd_output.txt is the file of my output of the lld command. The sed command removes the error text, grep removes the lines
+	that do not have \.so in them. The second sed removes the addresses that are after each library.
+	Lastly it is all output and stored in the file filt_ldd_o.txt.
+	
+sort -u filt_ldd_o.txt > filt_unq_ldd_o.txt
+-uniquely sorts the output removing all duplicates and giving our final list of unique dynamic libraries that were
+	used by the commands in the my list. 
+ 
+-UNIQUE LIST OUTPUT:
+        /lib64/ld-linux-x86-64.so.2 
+        libaudit.so.1 => /lib64/libaudit.so.1 
+        libavahi-client.so.3 => /usr/lib64/libavahi-client.so.3 
+        libavahi-common.so.3 => /usr/lib64/libavahi-common.so.3 
+        libbluetooth.so.3 => /usr/lib64/libbluetooth.so.3 
+        libbz2.so.1 => /lib64/libbz2.so.1 
+        libcom_err.so.2 => /lib64/libcom_err.so.2 
+        libcommon-3.2.0.so => /usr/lib64/htdig/libcommon-3.2.0.so 
+        libcrypto.so.10 => /usr/lib64/libcrypto.so.10 
+        libcrypt.so.1 => /lib64/libcrypt.so.1 
+        libc.so.6 => /lib64/libc.so.6 
+        libcups.so.2 => /usr/lib64/libcups.so.2 
+        libdbus-1.so.3 => /lib64/libdbus-1.so.3 
+        libdl.so.2 => /lib64/libdl.so.2 
+        libexpat.so.1 => /lib64/libexpat.so.1 
+        libfontconfig.so.1 => /usr/lib64/libfontconfig.so.1 
+        libfreebl3.so => /lib64/libfreebl3.so 
+        libfreetype.so.6 => /usr/lib64/libfreetype.so.6 
+        libfuzzy-3.2.0.so => /usr/lib64/htdig/libfuzzy-3.2.0.so 
+        libgcc_s.so.1 => /lib64/libgcc_s.so.1 
+        libgcj.so.10 => /usr/lib64/libgcj.so.10 
+        libgcj-tools.so.10 => /usr/lib64/libgcj-tools.so.10 
+        libgcrypt.so.11 => /lib64/libgcrypt.so.11 
+        libgnutls.so.26 => /usr/lib64/libgnutls.so.26 
+        libgpg-error.so.0 => /lib64/libgpg-error.so.0 
+        libgssapi_krb5.so.2 => /lib64/libgssapi_krb5.so.2 
+        libht-3.2.0.so => /usr/lib64/htdig/libht-3.2.0.so 
+        libhtdb-3.2.0.so => /usr/lib64/htdig_db/libhtdb-3.2.0.so 
+        libhtnet-3.2.0.so => /usr/lib64/htdig/libhtnet-3.2.0.so 
+        libhtword-3.2.0.so => /usr/lib64/htdig/libhtword-3.2.0.so 
+        libjli.so => not found
+        libjpeg.so.62 => /usr/lib64/libjpeg.so.62 
+        libk5crypto.so.3 => /lib64/libk5crypto.so.3 
+        libkeyutils.so.1 => /lib64/libkeyutils.so.1 
+        libkpathsea.so.4 => /usr/lib64/libkpathsea.so.4 
+        libkrb5.so.3 => /lib64/libkrb5.so.3 
+        libkrb5support.so.0 => /lib64/libkrb5support.so.0 
+        liblcms.so.1 => /usr/lib64/liblcms.so.1 
+        libm.so.6 => /lib64/libm.so.6 
+        libnetpbm.so.10 => /usr/lib64/libnetpbm.so.10 
+        libnsl.so.1 => /lib64/libnsl.so.1 
+        libogrove.so.0 => /usr/lib64/libogrove.so.0 
+        libopenjpeg.so.2 => /usr/lib64/libopenjpeg.so.2 
+        libospgrove.so.0 => /usr/lib64/libospgrove.so.0 
+        libosp.so.5 => /usr/lib64/libosp.so.5 
+        libostyle.so.0 => /usr/lib64/libostyle.so.0 
+        libpisock.so.9 => /usr/lib64/libpisock.so.9 
+        libpng12.so.0 => /usr/lib64/libpng12.so.0 
+        libpoppler.so.5 => /usr/lib64/libpoppler.so.5 
+        libpthread.so.0 => /lib64/libpthread.so.0 
+        libresolv.so.2 => /lib64/libresolv.so.2 
+        librt.so.1 => /lib64/librt.so.1 
+        libselinux.so.1 => /lib64/libselinux.so.1 
+        libssl.so.10 => /usr/lib64/libssl.so.10 
+        libstdc++.so.6 => /usr/lib64/libstdc++.so.6 
+        libtasn1.so.3 => /usr/lib64/libtasn1.so.3 
+        libtokyocabinet.so.8 => /usr/lib64/libtokyocabinet.so.8 
+        libusb-0.1.so.4 => /usr/lib64/libusb-0.1.so.4 
+        libz.so.1 => /lib64/libz.so.1 
+        linux-vdso.so.1 =>  

@@ -1,0 +1,113 @@
+Cody Hubbard - 004843389
+Week 7 Lab
+
+boot from cd
+try Ubuntu
+-loading the ubuntu OS to give root access for the lab
+
+ctrl-Alt-T
+-Open terminal in Ubuntu
+
+~~~~~SERVER SIDE~~~~~
+
+dpkg-get-selections | grep openssh
+
+OUTPUT:
+	openssh-client 			install
+
+-so we need to install the server 
+	
+sudo apt-get install openssh-server
+-installed the open ssh server
+
+dpkg-get-selections | grep openssh
+OUTPUT:
+	openssh-client 			install
+	openssh-server 			install
+	openssh-sftp-server 	install
+-check if the psuedo installwas successful
+
+ssh-keygen
+memes
+memes
+-create a (password?) key and generate a randmart image
+
+cat ~/.ssh/id_rsa.pub
+-sjow our public key
+
+cat ~/.ssh/id_rsa id_rsa.pub
+-show our private key
+
+sudo useradd -d /home/kyle -m kw
+sudo masswd kw
+memes1
+-specify the home directory name and create a password for our client to log in with
+-passphrase is memes1
+
+cd /home/kyle
+sudo mkdir .ssh
+-create a directory to hold the users key
+
+sudo chown -R kw .ssh
+-chaning owner to the client, username kw
+
+sudo chmod 700 .ssh
+-giving read, write, and execute permission to the owner and no others
+
+ifconfig
+-view our ip address, the inet address: 10.97.85.46
+
+ps -aux | grep firefox 
+-check if firefox is running under
+
+ps -aux | grep kw
+-view all processes being run by our client
+
+~~~~~CLIENT SIDE~~~~~
+
+ssh-keygen
+ssh-copy-id kw@10.97.85.46
+memes1
+memes1
+-generate public and private keys for encryption and authentication
+
+OUTPUT:
+	Your identification has been saved in ssh-copy-id kw@10.97.85.46.
+	Your public key has been saved in ssh-copy-id kw@10.97.85.46.pub.
+	The key fingerprint is:
+	SHA256:EJI5nHka0d49ZiHXEDs42zmH2TfQn+DOYaycTAqbVUQ ubuntu@ubuntu
+	The key's randomart image is:
+	+---[RSA 2048]----+
+	|   .oB.   +E     |
+	|    O.o...+...   |
+	|     *..o+oo...  |
+	|    . ...+**o....|
+	|       .S+*oo=o..|
+	|        = =o*... |
+	|       o . = o   |
+	|                 |
+	|                 |
+	+----[SHA256]-----+
+
+ssh-add
+-copy the private key over
+	
+ssh kw@10.97.85.46
+password
+OUTPUT:
+	The authenticity of host '10.97.85.46 (10.97.85.46)' can't be established.
+	ECDSA key fingerprint is SHA256:sgwj06nmfiPIVpMXdyu4c9AWsqywSmlCEI9F1qEY1mA.
+	Are you sure you want to continue connecting (yes/no)? y
+	Please type 'yes' or 'no': yes
+	Warning: Permanently added '10.97.85.46' (ECDSA) to the list of known hosts.
+	kw@10.97.85.46's password: 
+	Welcome to Ubuntu 16.10 (GNU/Linux 4.8.0-22-generic x86_64)
+
+	 * Documentation:  https://help.ubuntu.com
+	 * Management:     https://landscape.canonical.com
+	 * Support:        https://ubuntu.com/advantage
+
+-login to the server
+
+firefox
+-run firefox for verification of ligin on server side

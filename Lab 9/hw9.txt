@@ -1,0 +1,55 @@
+Cody Hubbard - 004843389
+homework 9
+
+cd week9/homework/
+git clone https://git.savannah.gnu.org/git/diffutils.git
+cd diffutils
+git checkout v3.0 -b quote
+git status
+-Check out version 3.0 of Diffutils and check to make sure it was checked out into branch quote
+
+ patch -p1 < quote-3.0-patch.txt
+ -install the patch
+ 
+ git status
+ -check if the patch was applied to the 6 files as expected, and get their names
+ 
+emacs src/cmp.c
+emacs src/diff.c
+emacs src/diff3.c
+emacs src/dir.c
+emacs src/sdiff.c
+emacs src/util.c
+-for each of these files added them to the changlog file and wrote an appropriate message using emacs.
+
+git commit -a -F src/ChangeLog
+-commit the changes made to the repository using :ChangeLog" as the commit message
+-the -a option specifies that we want to commit all files that have been changed that git 
+	already knows about and the -F option specifies that we want a file as the commit message
+	followed by the file itself.
+	
+NOTE: I did not have a partner for this part so i just checked out version 3.0 again into a new temporary branch "test",
+		and followed the proceeding steps.
+		
+git am < formatted-patch.txt
+-apply the patch
+
+export PATH=/usr/local/cs/bin:$PATH
+./bootstrap
+./configure
+make
+make check
+-checks to make sure the patch works as intended, make check has a few errors which i beleive are okay
+
+make distdir
+cd diffutils-3.0.1-6d1f3
+emacs ChangeLog
+-after running this and then going into the folder "diffutils-3.0.1-6d1f3" and opening
+the changelog file I can see my recent commit and custom Changelog entry appearing at 
+the top of the file as we want.
+
+cd ~eggert/src/gnu/emacs
+gitk
+-open the graphical interface for git merges and other stuff.
+-goinmg down the list i found the merge " Johan Claesson <johanclaesson@bredband.net>  2015-01-05 04:35:35" 
+which seemt to be the first merge that is not newer than 2015-01-25.

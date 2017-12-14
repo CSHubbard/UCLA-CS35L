@@ -1,0 +1,138 @@
+NOTES:
+#include <pthread.h>
+#include <stdio.h>
+pass lpthread when compiling or get an error
+
+
+~~~~~~LAB~~~~~~
+sort --version
+-checks to see the current version of the sort command
+	OUPUT: 
+	Copyright (C) 2013 Free Software Foundation, Inc.
+	License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+	This is free software: you are free to change and redistribute it.
+	There is NO WARRANTY, to the extent permitted by law.
+-using version 8.22 which is good
+
+man od
+od -An -tf4 -N40 < /dev/urandom | tr -s ' ' '\n'
+-check od man pagem then test od, -An suppresses memory location output, -tf4 chooses output type 
+	(floating point 4 bytes) -N### number of total bytes to read
+
+od -An -tf4 -N40000000 < /dev/urandom | tr -s ' ' '\n' > floats.txt
+-create a file of 10000000  random single-precision floating point numbers,
+	in textual form, one per line.
+
+wc -l floats.txt
+-gave 10000000+1 lines of text
+
+emacs floats.txt
+-remove the leading whitespace char
+
+time -p sort -g floats.txt > /dev/null
+-time the standard sort command with no (custom) multithreading.
+-OUTPUT:
+	real 21.48
+	user 115.25
+	sys 0.47
+
+time -p sort -g --parallel=1 floats.txt > /dev/null
+-time sort algorithm with multithreading equal to 1
+-OUTPUT:
+	real 103.53
+	user 103.34
+	sys 0.20
+
+time -p sort -g --parallel=2 floats.txt > /dev/null
+-time sort algorithm with multithreading equal to 1
+-OUTPUT:
+	real 55.16
+	user 104.64
+	sys 0.27
+
+time -p sort -g --parallel=4 floats.txt > /dev/null
+-time sort algorithm with multithreading equal to 1
+-OUTPUT:
+	real 32.99
+	user 110.63
+	sys 0.38
+
+time -p sort -g --parallel=8 floats.txt > /dev/null
+	real 21.01
+	user 115.34
+	sys 0.46
+
+-this shows that as the number of threads increases the overall system time increases,
+	and the real time drasically decreases. However the user time stays realtively close for all
+	multithreading variations. User time = total of time used by cpu for all threads.
+
+~~~~~~~~~~~~~~~~~~~~~~~LAB STUFF::~~~~~~~~~~~~~~~~~~~~~~~
+
+make clean check
+
+	[classhub@lnxsrv07 ~/srt]$ make clean check
+	rm -f *.o *.tmp 1-test.ppm 2-test.ppm 4-test.ppm 8-test.ppm srt srt.tgz
+	gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o main.o main.c
+	gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o raymath.o raymath.c
+	gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter   -c -o shaders.o shaders.c
+	gcc -std=gnu11 -g -O2 -Wall -Wextra -Wno-unused-parameter -o srt main.o raymath.o shaders.o -lm
+	time ./srt 1-test.ppm >1-test.ppm.tmp
+
+	real    0m44.977s
+	user    0m44.978s
+	sys     0m0.000s
+	mv 1-test.ppm.tmp 1-test.ppm
+	time ./srt 2-test.ppm >2-test.ppm.tmp
+	./srt: Multithreading is not supported yet.
+
+	real    0m0.002s
+	user    0m0.000s
+	sys     0m0.001s
+	make: *** [2-test.ppm] Error 1
+
+1)make sure that nthreads can be greater than 1.
+2)pthread_t *tid = (pthread_t*) malloc(sizeof(pthread_t)*numthreads);
+3)check if tid is null, if so print out errors and exit -(no memory)
+4) +=nthreads, pass id to function
+parallelize 
+		Thread 0 - 0 , 4, 8, 12
+		Thread 1 - 1 , 5, 9, 13
+		Thread 2 - 2 , 6, 10, 14
+		Thread 3 - 3 , 7, 11, 15
+		
+~~~~~~~~~~~~~~~~~~~~~~~~~~~ threadFunc
+		
+int temp[nthreads];
+for (int m1=0; n1 < nthread; n1++)
+	temp(n1) = n1;
+		
+int h;
+for (h=0; < nthread; h++)		
+	pthread_create(&tid[h],NULL, threadfunction, threadID~(temp+h))
+	
+int i;
+for (i = 0; i <nthreads; i++)
+	pthread_join(tid[i], NULL);
+	
+threadfunction
+	should accpet void* and return void*
+	
+	int j,l 
+	for (j = 0; j < width; j++)
+		for (i=0; i< width; i++)
+		{
+		
+		;scaled_color[j][l], scaled
+		
+for(int i = 0; i < width; i++)
+  {
+  	for(int j = 0; j < height; j++)
+	{
+  	  	printf("%.0f %.0f %.0f\n",
+  	  		printVals[i][j][0], printVals[i][j][1], printVals[i][j][2]);
+	}
+	printf("\n");
+  }
+	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~	makefile
+5) LDLIBS should have -lpthreads

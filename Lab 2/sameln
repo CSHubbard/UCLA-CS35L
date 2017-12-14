@@ -1,0 +1,35 @@
+#! /bin/bash
+
+myDir=$1
+cd $myDir
+
+myDir=".*|*"
+files=0
+temp1=0
+temp2=0
+
+for f in $myDir
+do
+    myFiles[$files]=$f
+    ((files++))
+done
+
+if (("$files" > "0")) ; then
+   while (("$temp1" <= "$files")); do
+   	 if [ -f "${myFiles[$temp1]}" ]; then
+	   while (("$temp2" <= "$files")); do
+	   	 if [ -f "${myFiles[$temp2]}" ]; then
+		     if [ test [cmp -s ${myFiles[$temp1]} ${myFiles[$temp2]}] ]; then
+			 ln -fs ${myFiles[$temp1]} ${myFiles[$temp2]}
+		     fi		     
+		 else
+		     echo "error: could not open file"
+		 fi
+		 ((temp2++))
+	   done
+	 else
+	     echo "error: could not open file"
+	 fi
+	 ((temp1++))
+   done
+fi

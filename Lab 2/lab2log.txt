@@ -1,0 +1,137 @@
+cody Hubbard 004843389
+Lab2 log
+CS35L
+
+locale enter
+-sued the locale command to examine my locales?
+
+export LC_ALL='C'
+-used to set all my locale to the correct one
+
+cat /usr/share/dict/words
+-used to view file I need to sort
+
+sort /usr/share/dict/words > words
+-used to write sorted file to a file named "word"
+
+wget http://web.cs.ucla.edu/classes/spring16/cs35L/assign/assign2.html
+-used to download the webpage
+
+man tr 
+-used to look up the tr command
+
+% \n* is the command \n repeated 
+
+tr -c 'A-Za-z' '[\n*] < assign2.html.2 > assign2tr1.html
+-replaced all characters that are non alphabetic with a newline
+
+diff assign2.html.2 assign2tr1.html 
+-showed me the difference between the two files as standard output
+
+tr -c 'A-Za-z' '[\n*]' < assign2.html.2
+-replaced all characters that are non alphabetic with a newline
+
+tr -cs 'A-Za-z' '[\n*]' < assign2.html.2
+-replaced all characters that are non alphabetic with a newline, then removed all duplicates of newlines
+
+tr -cs 'A-Za-z' '[\n*]' < assign2.html.2 | sort 
+-sorts the output of the tr command
+
+tr -cs 'A-Za-z' '[\n*]' < assign2.html.2 | sort -u
+-sorts the output of the tr command and removes duplicates from the sorting
+
+man com
+-used to look up comm command
+%compares sorted files line by line and outputs the result in a three column format
+
+tr -cs 'A-Za-z' '[\n*]' < assign2.html.2 | sort -u | comm - words
+-outputs the comparison between the replaced, sorted, 
+and unique version of the LAB webpage to the sorted words file
+
+tr -cs 'A-Za-z' '[\n*]' < assign2.html.2 | sort -u | comm -23 - words
+-suppresses the output of column 2 and column 3, i.e. only shows the words that are in the first file and not in the dictionary
+
+man 7 glob
+-access the glob manual entry
+
+man 7 regex
+-access the regex manual entry
+
+grep -E '^Bat' test1.txtq
+-searches the file for any lines with a string that starts with the string 'Bat'
+
+wget http://mauimapp.com/moolelo/hwnwdseng.htm 
+-downloads a copy of the webpage with all the hawaiian words we are working with
+
+LAB PART 2
+
+grep -E '<td>'.*'<\/td>' hwnwdseng.htm > out1.htm
+-finds any lines that contain the pattern <td>.*<\/td> and places them in a new file
+
+sed '/<td><\/td>/d' out1.htm > out2.htm
+-removes and lines that contained the occurrences of <td> </td> without anything between them
+
+sed 's/<td>\(.*\)<\/td>/\1/g' out2.htm > out3.htm
+-replaces all strings with a word surrounded by <td> with the same string but with the "<td>" removed
+
+sed -n 2~2p out3.htm > out4.htm
+-start at line 2 and increment it by 2 and print it, this effectively removes our english words
+
+sed 's/<u>\(.\)<\/u>/\1/g' out4.htm > out5.htm
+-replaces occurrences of characters surrounded by <u> </u> with just the character
+
+tr , '\n' < out5.htm > out6.htm
+replaces all occurrences of a comma with a new line
+
+sed 's/^[ \t]*//' out6.htm > out7.htm
+-removes spaces at the beginning and end of each line
+
+tr ' ' '\n' < out7.htm | sed '/^$/d' > out8.htm
+-replaced spaces with newlines s
+
+sed "s/\`/'/g" out8.htm > out9.htm
+-replaces grave with apostrophe
+
+tr A-Z a-z < out9.htm > out10.htm
+-replaces all capital letters with lowercase letters
+
+sed "/[^pk'mnwlhaeiou]/d" out10.htm > out11.htm
+-remove lines that contain "non-hawaiian" characters
+
+sort -u out11.htm > out12.htm
+-sorts and removes duplicates
+
+MY SCRIPT
+#! /bin/bash
+
+temp=$1
+
+grep -E '<td>'.*'<\/td>' $temp | sed '/<td><\/td>/d' | sed 's/<td>\(.*\)<\/td>/\1/g' | sed -n 2~2p | sed 's/<u>\(.\)<\/u>/\1/g' | tr , '\n' | sed 's/^[ \t]*//' | tr ' ' '\n' | sed '/^$/d' | sed "s/\`/'/g" | tr A-Z a-z | sed "/[^pk'mnwlhaeiou]/d" | sort -u
+
+
+tr '[:upper:]' '[:lower:]' < words | sort -u > swords
+-create a all lowercase, no duplicates version of words to use as a spellchecker
+
+tr '[:upper:]' '[:lower:]' < assign2.html | tr -cs "pkmnwlhae'iou" "[\n*]" | sort -u | comm -23 - hwords > misH
+-puts the mispelled in Hawaiian into the file "misH"
+
+tr '[:upper:]' '[:lower:]' < assign2.html | tr -cs 'A-Za-z' '[\n*]' | sort -u | comm -23 - swords > misE
+--puts the mispelled in Hawaiian into the file "misE"
+
+wc -l misE
+-tells us that there are 33 mispelled in english
+
+wc -l misH
+-tells us that there are 198 words mispelled in Hawaiian on this page
+
+comm -23 misE misH | wc -l
+-tells us there are 28 words "misspelled" as English, but not as Hawaiian
+
+comm -23 misE misH
+-shows us that some examples of the mispelled words are: idx, UTF, and sameln
+
+comm -13 misE misH | wc -l
+-tells us there are 193 words "misspelled" as Hawaiian, but not as English
+
+comm -13 misE misH
+-tells us that some examples of the mispelled words are: are wo, wikipe, ume

@@ -1,0 +1,98 @@
+Cody Hubbard - 004843389
+NOTE: these tests were run with "junk" files of varying sizes instead of varying "lines of input."
+The junkfiles themsleves were made by using the C code kindly supplied by student Cory Ye on Piazza.
+Said code included at end of this txt
+
+NOTE: I did not complete the shell script "sfrobs" in time so I cannot compare its runtime to the other programs
+
+----------JUNKFILE SIZE: 132KB----------
+
+time cat junk.txt | ./sfrobu > dontcare.txt
+
+real    0m0.166s
+user    0m0.016s
+sys     0m0.149s
+
+time cat junk.txt | ./sfrobu -f > dontcare.txt
+
+real    0m0.171s
+user    0m0.030s
+sys     0m0.138s
+
+time cat junk.txt | ./sfrob > dontcare.txt
+
+real    0m0.023s
+user    0m0.016s
+sys     0m0.003s
+
+
+----------JUNKFILE SIZE: 263KB----------
+
+time cat junk.txt | ./sfrobu > dontcare.txt
+
+real    0m0.316s
+user    0m0.039s
+sys     0m0.275s
+
+time cat junk.txt | ./sfrobu -f > dontcare.txt
+
+real    0m0.338s
+user    0m0.060s
+sys     0m0.275s
+
+time cat junk.txt | ./sfrob > dontcare.txt
+
+real    0m0.041s
+user    0m0.034s
+sys     0m0.002s
+
+
+----------JUNKFILE SIZE: 572KB----------
+
+time cat junk.txt | ./sfrobu > dontcare.txt
+
+real    0m0.686s
+user    0m0.090s
+sys     0m0.592s
+
+time cat junk.txt | ./sfrobu -f > dontcare.txt
+
+real    0m0.719s
+user    0m0.137s
+sys     0m0.577s
+
+time cat junk.txt | ./sfrob > dontcare.txt
+
+real    0m0.090s
+user    0m0.078s
+sys     0m0.004s
+
+Instead of a an estiamtion in "lines of input vs. time" using the filezie method I can estimate the 
+speed of the different programs using "filesize vs. time" 
+
+	sfrobu processes about 833.81 KB a second, sfrobu -f about 795.55 KB per second, and sfrob 6355.56 BK/s
+	This shows how inefficent user made system calls can be akin to the lab.
+	
+
+---------------Cory Ye's Junk-text-maker---------------
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+int main()
+{
+int k = 32;                        // Characters from the space ' ' (char ' ' = 32) and 95 characters past that. Can adjust to more characters in extended ASCII.
+int i = 0;
+int j = 0;
+int lim = 20;                     // Words approximately of length 20 (because of random spaces).
+srand (time(NULL));
+while (i < 5000) {                     // At least 5000 words. Adjust to however many you want to generate. (At this amount, approx 33000 bytes per run? I think.)
+j = 0;
+lim = 1 + (rand() % 15);           // Word length randomizer.
+while (j < lim) {
+putchar(k + (rand() % 95));      // Random characters from space to ---. Can adjust 95 to larger number for extended ASCII characters as well, but it doesn't matter.
+j++;
+}
+putchar(' ');
+i++;
+}
+}

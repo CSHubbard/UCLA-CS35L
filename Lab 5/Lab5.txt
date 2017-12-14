@@ -1,0 +1,57 @@
+//Cody Hubbard - 004843389
+//Lab 5 
+
+
+man tr
+-look at tr arguments
+
+tr abc xyz
+cat
+-translate cat to zxt
+
+gcc -std=c99 tr2b.c -o tr2b
+-compile the program
+
+./tr2b abc xyz
+-test the program written
+
+gcc -std=c99 tr2u.c -o tr2u
+-compile the second program
+
+./tr2u abc xyz
+-test the second program written
+
+dd if=/dev/urandom of=infile.txt bs=5120 count=1000
+-dd command to genrate a random file of 5000 bytes;
+
+ls
+-see if file was created
+
+strace -o tr2btrace.txt ./tr2b 'a' 'x' < infile.txt > dontcare.txt
+strace -o tr2utrace.txt ./tr2u 'a' 'x' < infile.txt > dontcare.txt
+-used to create trace files which will then be used to compare the 
+-system calls issued by the two programs
+
+65536 bytes read and write. tr2u 
+-read or write system call for one byte, find that it is extremely inefficant and has many more calls
+-library fucntions are much more efficent, better to read a buffered byte of data. dont use system calls yourself.
+
+time ./tr2b 'a' 'x' < infile.txt > dontcare.txt
+-OUTPUT:
+	real    0m0.191s
+	user    0m0.105s
+	sys     0m0.004s
+
+time ./tr2u 'a' 'x' < infile.txt > dontcare.txt
+-OUTPUT:
+	real    0m6.392s
+	user    0m0.265s
+	sys     0m6.053s
+
+-tr2u takes much longer to process the same amount of data, this reinforces the idea that
+-making system class yourself to unbuffered data is largely inefficent.
+
+Output:
+	real time - clock time
+	user time -cpu time used by program
+	system time - how much time was spent in the OS/priveliges ,ode (doing system calls)

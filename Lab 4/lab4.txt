@@ -1,0 +1,152 @@
+//#Cody Hubbard - 004843389
+//#Lab4 Log
+
+wget http://web.cs.ucla.edu/classes/spring17/cs35L/assign/coreutils-with-bug.tar.gz
+-download the file
+
+xzvf coreutils-with-bug.tar.gz
+-unzip the file
+
+mkdir coreutilsbugInstall
+-makes directory to install buggy version
+
+cd coreutilsbugInstall
+pwd 
+-gets absolute path for installation
+
+./configure -prefix=/u/eng/class/classhub/coreutilsbugInstall
+-prepares to install the program to a specified directory
+
+make
+-treis to comple to install, however failes with errors
+
+wget http://web.cs.ucla.edu/classes/spring17/cs35L/assign/coreutils.diff
+-downloads patch file
+
+pwd
+-gets absolute path for k
+
+patch -p0 < coreutils.diff
+-patches coreutils so our make no longer fails
+-the problem was that multiple files had functions with the same name.
+-since there was no concept of overlaoding in C this is not allowed.
+-the patch fixed the error by renaming funtions which had identical names.
+
+./configure -prefix=/u/eng/class/classhub/coreutilsbugInstall
+make
+make install
+-recompiles after patching, makes, then installs.
+
+
+cd ~
+cd coreutilsbugInstall/bin
+pwd
+-enter folder where i want to test bug
+-get absoulte path of bugg ls
+-OUTPUT:/u/eng/class/classhub/coreutilsbugInstall/bin
+
+
+tmp=$(mktemp -d)
+cd $tmp
+touch -d '1918-11-11 11:00 GMT' wwi-armistice
+touch now
+sleep 1
+touch now1
+TZ=UTC0 /u/eng/class/classhub/coreutilsbugInstall/bin/ls -lt --full-time wwi-armistice now now1
+-reproduce the bug
+OUTPUT:	-rw-r--r-- 1 classhub class 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice
+		-rw-r--r-- 1 classhub class 0 2017-04-26 21:54:52.572984130 +0000 now1
+		-rw-r--r-- 1 classhub class 0 2017-04-26 21:54:13.147252721 +0000 now
+		
+gdb /u/eng/class/classhub/coreutilsbugInstall/bin/ls
+-opens the ls executable in gdb		
+
+run -lt
+-runs the file and reproduces the bug
+
+break ls.c:2953
+-set a breakpoint at line 2953 in the ls.c file
+
+info breakpoints
+-looks at the breakpoint I just set
+
+run -lt
+-runs the file, but stops at line 2953
+
+p func
+OUTPUT: $1 = <optimized out>
+-this optimization is bad for debugging
+-so we need to go to configure file and turn off optimization
+
+IN A SPEREATE SESSION
+
+cd coreutils-with-bug/bin
+emacs configure
+-change the optimization options
+
+./configure -prefix=/u/eng/class/classhub/coreutilsbugInstall
+make
+make install
+-recompiles after changing the optimization setting, makes, then installs.
+
+BACK IN ORIGINAL SESSION
+
+quit
+y
+gdb /u/eng/class/classhub/coreutilsbugInstall/bin/ls
+-quits and reopens file in gdb
+
+break ls.c:2953
+run -lt
+s
+-run 6 simes to step until i got to qsort
+
+p func
+-prints function info 
+-OUTPUT: $1 = (int (*)(V, V)) 0x405c7a <compare_mtime>
+-this shows that we are using compare_mtime to do out date comparisons
+
+break compare_mtime
+run -lt
+y
+-sets a new breakpoint at our compare_time function, reruns from begining
+
+c
+-continues after out first breakpoint, stops at compare_mtime
+-OUTPUT:2884    static int compare_mtime (V a, V b) { return cmp_mtime (a, b, xstrcoll); }
+
+
+break cmp_mtime
+look for local variables
+-none
+
+break timespec_cmp
+info args
+info locals
+n
+info args
+info locals
+n
+info args
+info locals
+-searching though this codeblock for the error
+-find out error is in "timespec.h"
+
+cd lib
+emacs timespec.h
+-open timespec.h to fix the bug
+-save it as a new file
+
+diff -u timespec.h timespec-fixed.h > lab4.diff
+-create patch file
+
+When running the test in my home directory on the SEASnet Linux server i get the following output
+OUTPUT:
+[classhub@lnxsrv09 ~]$ TZ=UTC0 ls -lt --full-time wwi-armistice now now1
+-rw-r--r-- 1 classhub class 0 2054-12-17 17:28:16.000000000 +0000 wwi-armistice
+-rw-r--r-- 1 classhub class 0 2017-04-29 17:09:03.725522000 +0000 now1
+-rw-r--r-- 1 classhub class 0 2017-04-29 17:08:56.956794000 +0000 now
+
+From this output you can see that these machines did not do much better. The files are technically sorted
+correctly however the creation date of the armistrice file was errenously changed to some arbitrary year 
+in the future when it was specified to be far in the past.

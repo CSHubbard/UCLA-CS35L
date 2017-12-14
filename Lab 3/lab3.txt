@@ -1,0 +1,92 @@
+Cody Hubbard 004843389
+
+python
+-open a python interpreter or something
+
+"hello\nworld"
+
+'hello\nworld"
+
+-showed me that python doesnt care about the differnt use of ' and "
+-also printed to standard output
+
+22/3
+
+22/3.0
+-showed how python specifies when to return doubles or integers
+
+2**3
+-how to use exponenets
+
+print "1+2 is"
+-showed that print treats lines surrounded by " " as a string
+
+print "",1+2, "is"
+-shows that to evaluate expression they must be removed from the " "
+
+squares = [1,2,3,4,5,6]
+-makes a list contaitng numers 1 - 6
+
+squares[-3:]
+-prints the elements of squares starting at the -3rd entry and going to the 0th element
+where the 0th element is not included
+
+tar xvzf coreutils-7.6.tar.gz
+-extracts and prints information about the files extracted
+
+cd coreutils-7.6
+-make coreutils-7.6 my current directory
+
+emacs README
+-see if this tells me how to install
+
+emacs INSTALL
+-see if this tells me how to install
+
+cd~
+cd lab3
+mkdir coreutilsInstall
+-make directory to install coreutils-7.6
+
+./configure --prefix=/u/eng/class/classhub/lab3/coreutilsInstall
+-configure in preperation to install and use the option to change the install directory, creates Makefile
+
+make
+-runs the makefile 
+
+make install
+-install coreutils
+
+cd ..
+cd coreutils-Install
+./ls -l /bin/bash
+-verify bug 
+-PATH: /u/eng/class/classhub/coreutils-Install/bin
+-OUTPUT: -rwxr-xr-x 1 root root 960616 2016-10-17 03:05 /bin/bash
+
+
+cd ~
+cd coreutils-7.6
+cd src
+emacs ls.c
+-open ls file to apply patch. Used META-gg to go to specific line to apply patch changes
+
+cd ..
+make
+-rebuilds ls.c and  possibly a few other dependant files
+
+cd src
+./ls -l
+-tests if the patch was applied successfully
+-PATH: /u/eng/class/classhub/coreutils-7.6/src
+-OUTPUT(< 1 year):-rw-r--r-- 1 classhub class  17400 Apr 19 11:50 yes.o 
+-OUTPUT(> 1 year):-rw-r--r-- 1 classhub class   2458 Sep  1  2009 yes.c
+
+cd ~/coreutils-Install/bin/
+touch -t 8001031305 zoldfile 
+ls -l /bin/bash
+-Creates a new testfile with a custom creation date.
+-Checks if bug is still present in the install directory for multiple cases
+PATH: /u/eng/class/classhub/coreutils-Install/bin
+OUTPUT(< 1 year):-rwxr-xr-x 1 classhub class  86328 2017-04-19 11:50 yes
+OUTPUT(> 1 year):-rw-r--r-- 1 classhub class      0 1980-01-03 13:05 zoldfile

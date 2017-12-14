@@ -1,0 +1,195 @@
+git clone https://git.savannah.gnu.org/git/diffutils.git
+-download a copy of the git repository from Savannah
+
+cd diffutils
+git log > git-log.txt
+-store the changes that were made to this repository, ever
+
+git tag > git-tags.txt
+-store all the differnt version tags into a text file
+
+emacs git-log.txt
+ctrl-s maint: quote 
+-find the commit ID, copy it.
+
+
+git format-patch -1 62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f --stdout > quote-patch.txt
+-create a patch for the commit that fixes the quote problem
+
+git checkout v3.0 -b tmp
+-create a temporary branch "tmp"
+
+git status
+-check that I am on the new branch
+
+patch -p1 < quote-patch.txt
+-patch the file, some problems were skipped by pressing enter
+
+git status
+-view all the newly modified and untracked files created by applying the patch
+-OUTPUT:
+		[classhub@lnxsrv01 ~/week9/diffutils]$ git status
+		# On branch tmp
+		# Changed but not updated:
+		#   (use "git add <file>..." to update what will be committed)
+		#   (use "git checkout -- <file>..." to discard changes in working directory)
+		#
+		#       modified:   TODO
+		#       modified:   doc/diagmeet.note
+		#       modified:   ms/config.bat
+		#       modified:   ms/config.site
+		#       modified:   po/en.po
+		#       modified:   src/analyze.c
+		#       modified:   src/cmp.c
+		#       modified:   src/context.c
+		#       modified:   src/diff.c
+		#       modified:   src/diff.h
+		#       modified:   src/diff3.c
+		#       modified:   src/dir.c
+		#       modified:   src/ifdef.c
+		#       modified:   src/io.c
+		#       modified:   src/sdiff.c
+		#       modified:   src/side.c
+		#       modified:   src/system.h
+		#       modified:   src/util.c
+		#       modified:   tests/help-version
+		#
+		# Untracked files:
+		#   (use "git add <file>..." to include in what will be committed)
+		#
+		#       #git-log.txt#
+		#       NEWS.orig
+		#       README-hacking.orig
+		#       README-hacking.rej
+		#       README.orig
+		#       README.rej
+		#       cfg.mk.orig
+		#       cfg.mk.rej
+		#       git-log.txt
+		#       git-tags.txt
+		#       ms/config.site.orig
+		#       quote-patch.txt
+		#       src/cmp.c.orig
+		#       src/context.c.orig
+		#       src/diff.c.orig
+		#       src/diff.c.rej
+		#       src/diff.h.orig
+		#       src/diff3.c.orig
+		#       src/diff3.c.rej
+		#       src/dir.c.orig
+		#       src/sdiff.c.orig
+		#       src/system.h.orig
+		#       src/util.c.orig
+		#       tests/help-version.orig
+
+
+cat src/diff3.c.rej
+-view one of the reject files
+
+emacs NEWS 
+C-x v =
+-view differnces
+C-x v u
+-revert differnces
+C-x v =
+-check changes again (it reports "No changes between working revision and workfile")
+
+-do this for every single non .c/.h file located in the git status list of modified files
+-LIST OF FILES REVERTED:
+	#
+	#       modified:   NEWS
+	#       modified:   README
+	#       modified:   TODO
+	#       modified:   doc/diagmeet.note
+	#       modified:   ms/config.bat
+	#       modified:   ms/config.site
+	#       modified:   po/en.po
+	#       modified:   tests/help-version
+
+git status 
+-check changes were removed
+
+emacs src/analyze.c
+C-x v =
+(manually move cursor to + line)
+C-c C-c
+(undo the change)
+-this command chain opend an .c file which should not have been modified, checked its differences, 
+	then used the GOTO-SOURCE command (C-c C-c) to go to the modifed line where i reverted the change 
+	manually and then saved the file
+	
+git status
+-PARTIAL OUTPUT:
+	#       modified:   src/cmp.c
+	#       modified:   src/diff.c
+	#       modified:   src/diff3.c
+	#       modified:   src/dir.c
+	#       modified:   src/sdiff.c
+	#       modified:   src/util.c
+-this is the haldf dozen files defined in the spec
+
+emacs src/diff.c.rej
+emacs src/diff3.c.rej
+
+DIFFERENT WINDOW:
+emacs src/diff.c
+emacs src/diff3.c
+
+-check the rejected patch files for waht we need to patch by hand an then apply the patch by hand in another window.
+
+git clean -f
+-removes all the untracked file we dont want anymore
+
+git status
+-check for our 6 files again (theyre there)
+
+git diff > quote-3.0-patch.txt
+-output a testing patch data, my testpatch.txt is 396 lines long as the lab guide says it should be.
+
+export PATH=/usr/local/cs/bin:$PATH
+./bootstrap
+./configure
+make
+make check
+-builds the modified version of Diffutils following the directions in README-hacking,
+	make check has a few errors which i beleive are okay
+
+cd src
+./diff . -
+-OUTPUT:
+	./diff: cannot compare '-' to a directory
+-which is what we wanted
+
+./diff --help > ~/temp.txt
+cd ~
+emacs temp.txt
+-chek the diff --help, ctrl-s ` find nothing which is exactly waht we want
+
+mkdir lab9part2
+cd lab9part2/
+mkdir diffutils-3.0
+mkdir diffutils-3.0-patch
+mkdir temp
+cd temp
+git clone https://git.savannah.gnu.org/git/diffutils.git
+cd diffutils
+git checkout v3.0 -b mybranch
+
+cp -r src ~/lab9part2/diffutils-3.0
+
+cd ~/week9/diffutils
+cp -r src ~/lab9part2/diffutils-3.0-patch
+
+cd ~/lab9part2/
+~/week9/diffutils/src/diff -pru diffutils-3.0 diffutils-3.0-patch > quote-3.0-test.txt
+-the extensive commands above are to generate a diff file which can then be examined and cheched against the original
+	source code
+
+cd 
+diff quote-3.0-test.txt ~/week9/diffutils/quote-3.0-patch.txt > out.txt
+emacs out.txt
+
+-The files are not identical. However i bielive the differences to be "innocuous" becasue they are limited to
+	 hunk formatting differences as well as some general output differnces which should all be "innocuous."
+	 
+-With these results we should be able to confirm that our modified diff behaves as expected and the ` problem was fixed.

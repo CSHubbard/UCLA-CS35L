@@ -1,0 +1,35 @@
+Cody Hubbard 004843389
+
+Q1: It was removed becasue the label was no longer necessary. It was good style to remove it.
+
+Q2: I am not sure how language settings work with coreutils or *Nix systems in general, but 
+	unless the date format is translated to the users langaue somehow the new ls format will 
+	be incomprehensible, mainly due to the month abbreviations.
+	
+Q3: It returned a stack trace and an error detailed below
+OUTPUT:
+Traceback (most recent call last):
+  File "randline.py", line 70, in <module>
+    main()
+  File "randline.py", line 64, in main
+    sys.stdout.write(generator.chooseline())
+  File "randline.py", line 34, in chooseline
+    return random.choice(self.lines)
+  File "/usr/lib64/python2.7/random.py", line 274, in choice
+    return seq[int(self.random() * len(seq))]  # raises IndexError if seq is empty
+IndexError: list index out of range
+
+problem in module -> problem in main -> problem in call to generator.chooseline() 
+-> problem in return random.choice(self.lines)
+
+I went to /usr/lib64/python2.7/random.py opened the file and found that this specific error is set to be raised if
+"seq is empty" which it was because we purposefully passed in an emty file, "null"
+
+Q4:
+Running with with python3 it outputs get a sytax error, this is becasue in python3 you cannot read an exception in that format, as a tuple. 
+And when we pass in an empty file we raise this exception causing the invalid syntax to trigger.
+OUTPUT:
+  File "randline.py", line 65
+    except IOError as (errno, strerror):
+                      ^
+SyntaxError: invalid syntax

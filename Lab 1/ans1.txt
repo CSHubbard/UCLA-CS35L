@@ -1,0 +1,125 @@
+Cody Hubbard 004843389
+CS 35L - Lab 1
+4/6/2017
+
+1. How can you get man to print all the commands that have a specific word in their man page (or at least the description part of the man page)? (hint: man man)
+
+Answer: Use the command “man -k search_term” 
+Keystrokes: man man 
+Explanation: “man man” was used to look at the manual page for the manual to find the search operation
+
+2.Where are the cp and wc programs located in the file system?
+
+Answer: both are located in /usr/bin
+Keystrokes: which cp enter which wc enter
+Explanation: the “which” command was used to give the locations of the two programs
+
+
+3.What executable programs have names that are just one character long, and what do they do?
+
+Answer: X, w, and [ are the executables which are one character long. X seems to try and start X server but fails, w seems to return information about the linux server I am connected to, including info about all users logged in, and lastly [ seems to do nothing. It returns an error.  
+Keystrokes: find /usr/bin/ -executable -name ? enter X enter w enter [ enter
+Explanation: I used the find command to search the usr/bin/ directory along with the -executable option to ensure it only returned executables, the -name option to make sure it searched filenames, and the ? expression to search for names with a length of one character. I then ran all three returned executables to try and figure out what each of them did,
+
+4.When you execute the command named by the symbolic link /usr/bin/emacs, which file actually is executed?
+
+Answer: the file “actually” executed is also named emacs, however it is located in /etc/alternatives/emacs.
+Keystrokes:cd /usr/bin enter ls -l emacs enter
+Explanation: cd /usr/bin was used to change my directory so that the next command would search the correct directory. Next ls with the -l option with the emacs filename was used to display the detailed information about execs, specifically the executable the symbolic link led to.
+
+5.The chmod program changes permissions on a file. What does the symbolic mode g+s,o-x mean, in terms of permissions?
+
+Answer: The g+s command grants in addition to the file’s group’s other permissions(+)(g) the function of setting group id on execution(s). The o-x command removes(-) the execution permission(x) from all users not in the file’s group(o).
+Keystrokes:man chmod enter
+Explanation: I used “man chmod” to look up the exact usage of the options in the question.
+
+
+6. What option to find lets you search for files that have been modified in the last three weeks?
+
+Answer: the “ -mtime -21” option for find would do this
+Keystrokes: man find enter esc/modified enter 
+Explanation: “man find” was used to look at the manual page for find. “esc/modified” was used to search the manual page for the any commands which have to do with modifications and possibly some sort of modification dates.
+
+
+7. Use the previous answer to find all directories modified in the last three weeks.
+
+Answer:
+./Desktop
+./Desktop/$RECYCLE.BIN
+./Documents
+./Downloads/$RECYCLE.BIN
+./.cache/abrt
+./.emacs.d
+./.emacs.d/auto-save-list
+Keystrokes:cd ~ enter find -mtime -21 -type d
+Explanation: “cd ~” was used to go to the home directory and then “find -mtime -21 -type d”
+Was used to list all files of type directory which had been modified in the last 21 days (3 weeks).
+
+8. Of the files in the same directory as find, how many of them are symbolic links?
+
+Answer:247 symbolic links
+Keystrokes:which find enter find /usr/bin -type l | wc -l enter
+Explanation: I used “which find” to determine the directory find was located in and then used the find command, specifying that directory, along with the “-type l” optician to get all symbolic links as output. Lastly used “| wc -l” to pipeline the output to wc which with the -l option counted all the lines for me. 
+
+9.What is the oldest regular file in the /usr/lib directory?
+
+Answer: Jun 28 2016 - libfreeblpriv3.so
+Keystrokes: man ls enter cd /usr/lib enter ls -lt 
+Explanation: “man ls” to look up time sort, cd /usr/lib to go to that directory and then ls with the -lt modifier to list the contents in order of date modified
+
+
+10.Where does the locale command get its data from?
+
+Answer:”The local category based on the setting of the environment variables that control the locale." 
+Keystrokes:man locale
+Explanation: man locale was used to look up the description of the locale command
+
+11.In Emacs, what commands have sort in their name?
+
+Answer:
+Buffer-menu-sort
+dired-sort-toggle-or-edit
+sort-columns
+sort-fields
+sort-lines
+sort-numeric-fields
+sort-pages
+sort-paragraphs
+sort-regex-fields
+tabulated-list-col-sort
+tabulated-list-sort
+
+Keystrokes:C-h ? C-h a sort enter C-x o
+Explanation:looked in help for how to search commands for a keyword, then ran that search.
+
+12.Briefly, what do the Emacs keystrokes C-M-a through C-M-h do? Can you list their actions concisely?
+
+These commands mostly move the cursor over text
+C-M-a: move backward over a function
+C-M-b: move backward over a sexp
+C-M-c: exit a recursive edit
+C-M-d: runs the command down list
+C-M-e: move forward over a function
+C-M-f: move forward over a sexp
+C-M-g: undefined, runs C-g instead
+C-M-h: marks a function
+Keystrokes: C-h c C-M-d C-h c C-M-g
+Explanation: I looked up many commands in the “GNU Emacs Reference Card” and for those which were not on it I first looked up how to look up commands in emacs and then looked up each command using C-h c while within emacs.
+
+13. In more detail, what does the Emacs keystroke C-g do?
+
+Answer: runs the command “keyboard-quit.” It tries to exit any other command currently being run in emacs.
+Keystrokes:C-h c C-g
+Explanation: I looked up the exact command in emacs and then used the reference card to confirm my findings
+
+14.What does the Emacs yank function do?
+
+Answer: it reinserts (“paste”) the most recent kill.
+Keystrokes: C-h ? C-g C-h f yank enter
+Explanation: looked up how to get help with a function, then proceed to do so for the yank function
+
+15.When looking at the directory /usr/bin, what's the difference between the output of the ls -l command, and the directory listing of the Emacs dired command?
+
+Answer:In emacs the total memory and total used memory is shown
+Keystrokes:ls /usr/bin -l enter cd /usr/bin emacs C-x d enter
+Explanation: ran normal ls -l then moved to the bin directory where I ran the Emacs dired command.

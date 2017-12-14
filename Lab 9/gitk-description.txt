@@ -1,0 +1,17 @@
+Cody Hubbard - 004843389
+homework 9 - gitk description
+
+Upon using gitK a window appears with many subwindows.
+starting at the top left, 
+
+The top left window is some of git repository tree structure showing merges and files. The next window to the right
+shows the name and email address of the merge. the lastmost widonw shows the late of the 
+merge itself.
+	
+The middle left medium sized window shows more detailed info about the merge, parent pointer, child, branches, etc...
+	
+Below this shows the actual changes made to the file
+	
+Lastly the large window on the the has multiple options. Patch which shows individual files modified
+showing their changes in the large left window like a diff file, and Tree which shows the full directory's 
+files.

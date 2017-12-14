@@ -1,0 +1,30 @@
+Cody Hubbard - 004843389
+Week 7 HW
+
+1. If the other teams had really been observing all of the bytes going over the network my 
+	network should still be secure becasue the password used to log in was given by word.
+	ssh uses this apssword in asymmetrical encryption which cannot be decrypted without 
+	the private key which would not have been obtainable by simply observing the network.
+	However having all of our data observed is a bit of a breach of security in itself so the 
+	network may be considred insecure becasue of that.
+	
+	If the other teams had a keylogger on our machines the security of the network would be
+	highly comprimised. The biggest reason behind my conclusion that the network was secure
+	before was the fact that the password which was used for session authentication was passed by word.
+	However, now that all the keystrokes are being logged the security of all passwords are completely 
+	compromised as they will be recorded when the network is established as well as when the user logs in.
+	This would then allow them to decrypt any of data which was observed that they would like.
+	
+	If we are booting off a usb and the other teams had physical control of the USB the security of
+	the network would also be extremely compromised becasue the teams could use a large number of
+	means, such as giving themselves root access to our boot enviroment. They could easily
+	 obtain the public and private keys which are made by ssh and thus decrypt everything. 
+	
+2. The gpg --verify command doesnt really verify that I personally created the file becasue it 
+	only checks wether it has a valid gpg signature from its public key. This means
+	that if a malicious user intercepts some sort of data and its public key, decrypts it
+	changes the data and resends it along with his own public key used for re-encryption
+	this "verification" will come back clean after decrypting the file, none the wiser to 
+	the change in sender.
+	The way to fix this is to use an honest and trustworthy third party to handle the creation of 
+	public keys and records of file creators. The Cerficate Authority is widely used for this.
